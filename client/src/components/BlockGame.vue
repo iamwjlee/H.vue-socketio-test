@@ -10,16 +10,34 @@
       <button v-on:click="move('up')">Up</button> 
       <button v-on:click="move('down')">Down</button> 
     </p>
-     <h2>{{incommingList}}</h2>  
-      <br>
-     <h2>{{incommingData}}</h2>  
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+  
+    <hr> <strong>incommingData </strong> 
+    
+    <h2>{{incommingData}}</h2>
+
+
+    <hr> <strong>incommingArray </strong> 
+   
+       <ul>
+      <li v-for="item in incommingArray" :key="item[0]+item[1]" >
+        <h2> {{item}} </h2> 
+      </li>
+    </ul>
+
+    <hr> <strong>incommingData v-for </strong> 
+
 
     <ul>
-      <li>
-
-      </li>
-
+        <li v-for="item in incommingData" :key="item" >
+          {{item}}
+        </li>
     </ul>
+
   </div>
 </template>
 
@@ -28,7 +46,7 @@
 
 
   ]
-  let hello_test='abcaafda'
+  let hello_test='111abcaafda'
   //https://www.youtube.com/watch?v=ppcBIHv_ZPs  :: javascript & socket.io
   import io from "socket.io-client";
   export default {
@@ -37,6 +55,8 @@
       return {
         hello: hello_test,
         incommingData: [],
+        incommingArray: [],
+
         incommingList: list,
         socket: {},
         context:{},
@@ -69,37 +89,33 @@
         console.log('+');
 
       });
-      this.socket.on("incomming",data=>{
-        //this.incommingData.push(data); 
-        //console.log(this.incommingList.length);
-        console.log(data[0]);
-        console.log(list.length);
-          
-        if(list.length===0) {
-            list.push(data);
-        }
-        else {
-
-          let hit=0;
-          for(let i=0; i< list.length; i++ ) {
-              if(data[0]===list[i][0]) {
-                list[i][3]=data[3];
-                hit=1;
-                console.log('same ---> '+' length='+ list.length + ' data[3]=' +list[i][3]);
-
-                break;
-              }
-            }
-            if(hit===0)  {
-              console.log('you can not see it');
-              list.push(data);
-            }
-        }
-          //this.incommingData=data;
-      });
-      this.socket.on("realtime",data=>{
+      this.socket.on("incommingTestData",data=>{
         console.log(data);
         this.incommingData=data;
+        if(this.incommingArray.length===0) {
+          console.log('first')
+          this.incommingArray.push(data);
+        }
+        else {
+          let same=0;
+          for(let i=0;i<this.incommingArray.length;i++) {
+            if(this.incommingArray[i][0]===data[0] && this.incommingArray[i][1]===data[1])
+            {
+              console.log('same')
+              same=1;
+              this.incommingArray[i]=data;
+              break;
+            } 
+          }
+          if(same===0) {
+            this.incommingArray.push(data);
+            console.log('new')
+            console.log(data)
+            console.log(this.incommingArray[0])
+          }
+        }
+        //this.incommingArray.push(data);
+
 
       });
 
@@ -114,6 +130,9 @@
   }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+li {
+  list-style: none;
+}
 </style>

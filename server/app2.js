@@ -15,10 +15,6 @@ app.get('/test',test);
 function test(req,res) { //callback
     res.send('test!!!!');
 }
-app.get('/test',test);
-function test(req,res) { //callback
-    res.send('test!!!!');
-}
 //https://www.youtube.com/watch?v=e4qKBkwwkNg
 //https://www.youtube.com/watch?v=6iZiqQZBQJY
 app.get('/test/:test01/:num?',test01); //router with parameter //if num is not defined then undefined
@@ -43,50 +39,41 @@ let position = {
     x:200,
     y:200
 }
-let incommingData = [
+let incommingTestData = [
     ['192.168.0.34','02','1',0],
     ['192.168.0.35','03','1',0],
     ['192.168.0.36','04','1',0],
     ['192.168.0.37','05','1',0],
 ]
+let singleData =[]
 let incommingCnt=0;
-let freeCnt=[0,0,0,0];
+let freeCnt=0;
 let buggyCnt;
 
 io.on('connection',socket=>{
-    socket.emit("position",position);
    
 
     if(buggyCnt) clearInterval(buggyCnt);
     buggyCnt=setInterval(function(){
-        //position.x +=5;
-        //if(position.x>500) position.x=0;
-        //timerfunction();
-        incommingData[incommingCnt][3]=freeCnt[incommingCnt]++;
-        //io.emit("incomming",incommingData[incommingCnt]);
-        io.emit("realtime",incommingData[incommingCnt]);
+
+        incommingTestData[incommingCnt][3]=freeCnt++; //freeCnt[incommingCnt]++;
+
+        singleData=incommingTestData[incommingCnt]
+        io.emit("incommingTestData",singleData);
+
         incommingCnt++
         if(incommingCnt==4) incommingCnt=0;
 
+
         console.log('interval:'+incommingCnt)
-    },5000);
+    },1000);
   
-    //
-
-
-
-    socket.on('login',data=>{
-        console.log('io logged-in '+ data.name +' '+ data.userid);
-        socket.name=data.name;
-        socket.userid=data.userid;
-        //console.log(socket);
-        
-        socket.emit('login',data.name);
-    });
     socket.on('disconnect',()=>{
         console.log('socket disconnect');
         socket.disconnect();
     });
+
+    socket.emit("position",position);
     socket.on("move",data=>{
         switch(data) {
             case "left":
